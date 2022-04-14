@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Abstract class, for getting titles, across all systems 
  */
-abstract class SystemTitles
+abstract class SystemTitles //interface would be better than abstract class, but I find abstract classes more convenient in use for me
 {
     /**
      * Holds singleton to object
@@ -19,9 +19,15 @@ abstract class SystemTitles
      * @param mixed ...$args
      * @return static
      */
-
+    
+    /**
+     * Cache time
+     */
     const CACHE_TIME = 60 * 15;
 
+    /**
+     * How many repeat, if request fails
+     */
     const REPEAT = 3;
 
     /**
@@ -29,6 +35,12 @@ abstract class SystemTitles
      * @var array
      */
     protected $titles = [];
+
+    /**
+     * Get instance
+     * @param mixed ...$args
+     * @return static
+     */
     public static function getInstance(...$args)
     {
         if (!static::$singleton) {
@@ -44,21 +56,25 @@ abstract class SystemTitles
      */
     public function get()
     {
+        //if titles were acquired in request lifecycle
         if ($this->titles) {
             return $this->titles;
         }
 
-        for ($i = 0; $i < static::REPEAT; $i++) {
+        //repeat on failure
+        for ($i = 0; $i < max(static::REPEAT, 1); $i++) {
             $titles = $this->getTitles();
             if ($titles) {
                 break;
             }
         }
 
+        //try to get from cache
         if (!$titles) {
             $titles = cache($this->getCacheKey());
         }
 
+        //if succeed, cache results, and save to use in request lifecycle more than once
         if ($titles) {
             Cache::put($this->getCacheKey(), $titles, self::CACHE_TIME);
             $this->titles = $titles;

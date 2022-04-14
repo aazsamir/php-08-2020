@@ -31,6 +31,7 @@ class AuthController extends Controller
                 // 'validation' => $validation->failed(),
             ]);
         }
+        //it would look much better, if handled by external class
         //define primary actions (match, for matching what system user is trying to log in, and action, to try log in) to use, in order to auth user
         $actions = [
             'foo' => [
@@ -44,7 +45,6 @@ class AuthController extends Controller
                 },
                 'action' => function ($login, $password) {
                     $auth_ws = new AuthWS();
-                    $return = null;
                     try {
                         $return = $auth_ws->authenticate($login, $password);
                         return true;
