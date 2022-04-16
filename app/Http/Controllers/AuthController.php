@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\Auth\SystemAuth;
 use External\Bar\Auth\LoginService;
 use External\Baz\Auth\Authenticator;
 use External\Baz\Auth\Responses\Success;
@@ -31,81 +32,13 @@ class AuthController extends Controller
                 // 'validation' => $validation->failed(),
             ]);
         }
-        //it would look much better, if handled by external class
-        //define primary actions (match, for matching what system user is trying to log in, and action, to try log in) to use, in order to auth user
-        $actions = [
-            'foo' => [
-                'match' => function ($login) {
-                    $matches = [];
-                    if (preg_match('/^FOO/', $login, $matches)) {
-                        return true;
-                    }
-
-                    return false;
-                },
-                'action' => function ($login, $password) {
-                    $auth_ws = new AuthWS();
-                    try {
-                        $return = $auth_ws->authenticate($login, $password);
-                        return true;
-                    } catch (\Exception $e) {
-                        return false;
-                    }
-                },
-            ],
-            'bar' => [
-                'match' => function ($login) {
-                    $matches = [];
-                    if (preg_match('/^BAR/', $login, $matches)) {
-                        return true;
-                    }
-
-                    return false;
-                },
-                'action' => function ($login, $password) {
-                    $login_service = new LoginService();
-                    return $login_service->login($login, $password);
-                },
-            ],
-            'baz' => [
-                'match' => function ($login) {
-                    $matches = [];
-                    if (preg_match('/^BAZ_/', $login, $matches)) {
-                        return true;
-                    }
-
-                    return false;
-                },
-                'action' => function ($login, $password) {
-                    $authenticator = new Authenticator();
-                    $return = $authenticator->auth($login, $password);
-                    if ($return instanceof Success) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                },
-            ]
-        ];
-
-        $result = false;
-
-        $matched_system = null;;
-
-        foreach ($actions as $system => $data) {
-            $match = $data['match'];
-            if ($match($post['login'])) {
-                $action = $data['action'];
-                $result = $action($post['login'], $post['password']);
-                $matched_system = $system;
-                break;
-            }
-        }
+        $system_auth = SystemAuth::getInstance();
+        $result = $system_auth->auth($post['login'], $post['password']);
 
         if ($result) {
             return response()->json([
                 'status' => 'success',
-                'token' => $this->generateToken($post['login'], $matched_system),
+                'token' => $system_auth->generateToken($post['login']),
             ]);
         }
 

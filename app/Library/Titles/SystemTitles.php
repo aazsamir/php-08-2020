@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Library;
+namespace App\Library\Titles;
 
 use Illuminate\Support\Facades\Cache;
 
@@ -19,7 +19,7 @@ abstract class SystemTitles //interface would be better than abstract class, but
      * @param mixed ...$args
      * @return static
      */
-    
+
     /**
      * Cache time
      */

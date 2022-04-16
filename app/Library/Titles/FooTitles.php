@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Library;
+namespace App\Library\Titles;
 
 use External\Foo\Movies\MovieService;
 
@@ -10,9 +10,9 @@ class FooTitles extends SystemTitles
     {
         $system = new MovieService();
         $raw = null;
-        try{
+        try {
             $raw = $system->getTitles();
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return;
         }
         return $raw;

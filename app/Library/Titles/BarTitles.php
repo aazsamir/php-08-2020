@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Library;
+namespace App\Library\Titles;
 
 use External\Bar\Movies\MovieService;
 

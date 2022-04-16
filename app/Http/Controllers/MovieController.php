@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Library\BarTitles;
-use App\Library\BazTitles;
-use App\Library\FooTitles;
-use App\Library\SystemTitles;
+use App\Library\Titles\BarTitles;
+use App\Library\Titles\BazTitles;
+use App\Library\Titles\FooTitles;
+use App\Library\Titles\SystemTitles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
