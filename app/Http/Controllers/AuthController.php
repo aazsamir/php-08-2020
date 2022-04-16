@@ -46,21 +46,4 @@ class AuthController extends Controller
             'status' => 'failure',
         ]);
     }
-
-    /**
-     * Generate Auth token, based on login and used system
-     * @param string $login
-     * @param string $system
-     * @return string
-     */
-    protected function generateToken($login, $system)
-    {
-        return base64_encode(
-            json_encode([
-                'login' => $login,
-                'system' => $system,
-                'secret' => 'foo_bar_baz',
-            ])
-        );
-    }
 }
